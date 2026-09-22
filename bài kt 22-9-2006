@@ -1,0 +1,209 @@
+#include <iostream>
+#include <string>
+#include <iomanip>
+
+using namespace std;
+
+struct SinhVien
+{
+    int maSV;
+    string tenSV;
+    string lop;
+    double tongKet;
+    string hanhKiem;
+};
+
+struct Node
+{
+    SinhVien data;
+    Node* left;
+    Node* right;
+};
+
+typedef Node* Tree;
+
+void KhoiTao(Tree& T)
+{
+    T = NULL;
+}
+
+Node* TaoNode(SinhVien sv)
+{
+    Node* p = new Node;
+
+    p->data = sv;
+    p->left = NULL;
+    p->right = NULL;
+
+    return p;
+}
+
+SinhVien NhapSinhVien()
+{
+    SinhVien sv;
+
+    cout << "Nhap ma sinh vien: ";
+    cin >> sv.maSV;
+    cin.ignore();
+
+    cout << "Nhap ten sinh vien: ";
+    getline(cin, sv.tenSV);
+
+    cout << "Nhap lop: ";
+    getline(cin, sv.lop);
+
+    cout << "Nhap tong ket: ";
+    cin >> sv.tongKet;
+    cin.ignore();
+
+    cout << "Nhap hanh kiem: ";
+    getline(cin, sv.hanhKiem);
+
+    return sv;
+}
+
+void ChenNode(Tree& T, Node* p)
+{
+    if (T == NULL)
+    {
+        T = p;
+    }
+    else
+    {
+        if (p->data.maSV < T->data.maSV)
+        {
+            ChenNode(T->left, p);
+        }
+        else if (p->data.maSV > T->data.maSV)
+        {
+            ChenNode(T->right, p);
+        }
+        else
+        {
+            cout << "Ma sinh vien da ton tai!\n";
+            delete p;
+        }
+    }
+}
+
+Node* TimKiem(Tree T, int maSV)
+{
+    if (T == NULL)
+    {
+        return NULL;
+    }
+
+    if (maSV == T->data.maSV)
+    {
+        return T;
+    }
+
+    if (maSV < T->data.maSV)
+    {
+        return TimKiem(T->left, maSV);
+    }
+
+    return TimKiem(T->right, maSV);
+}
+
+void Duyet(Tree T)
+{
+    if (T != NULL)
+    {
+        Duyet(T->left);
+
+        cout << left
+             << setw(12) << T->data.maSV
+             << setw(25) << T->data.tenSV
+             << setw(15) << T->data.lop
+             << setw(12) << fixed << setprecision(2) << T->data.tongKet
+             << setw(15) << T->data.hanhKiem
+             << endl;
+
+        Duyet(T->right);
+    }
+}
+
+void XuatSinhVien(SinhVien sv)
+{
+    cout << "\nSinh vien tim thay theo msv vua nhap:\n";
+
+    cout << left
+         << setw(12) << "Ma SV"
+         << setw(25) << "Ten sinh vien"
+         << setw(15) << "Lop"
+         << setw(12) << "Tong ket"
+         << setw(15) << "Hanh kiem"
+         << endl;
+
+    cout << left
+         << setw(12) << sv.maSV
+         << setw(25) << sv.tenSV
+         << setw(15) << sv.lop
+         << setw(12) << fixed << setprecision(2) << sv.tongKet
+         << setw(15) << sv.hanhKiem
+         << endl;
+}
+
+int main()
+{
+    Tree T;
+    KhoiTao(T);
+
+    int n;
+
+    do
+    {
+        cout << "Nhap so luong sinh vien n:";
+        cin >> n;
+
+        if (n <= 0)
+        {
+            cout << "n phai lon hon 0. Vui long nhap lai!\n";
+        }
+
+    } while (n <= 0);
+
+    cout << "\nNhap danh sach sinh vien:";
+
+    for (int i = 0; i < n; i++)
+    {
+        cout << "\nSinh vien thu " << i + 1 << "\n";
+
+        SinhVien sv = NhapSinhVien();
+
+        Node* p = TaoNode(sv);
+
+        ChenNode(T, p);
+    }
+
+    cout << "\nDanh sach sinh vien vua nhap:\n";
+
+    cout << left
+         << setw(12) << "Ma SV"
+         << setw(25) << "Ten sinh vien"
+         << setw(15) << "Lop"
+         << setw(12) << "Tong ket"
+         << setw(15) << "Hanh kiem"
+         << endl;
+
+    Duyet(T);
+
+    int maCanTim;
+
+    cout << "\nNhap ma sinh vien can tim: ";
+    cin >> maCanTim;
+
+    Node* ketQua = TimKiem(T, maCanTim);
+
+    if (ketQua != NULL)
+    {
+        XuatSinhVien(ketQua->data);
+    }
+    else
+    {
+        cout << "\nKhong co sinh vien co ma "
+             << maCanTim << " trong cay!";
+    }
+
+    return 0;
